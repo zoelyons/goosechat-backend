@@ -1,4 +1,6 @@
 const route = require('express').Router();
+const { body, validationResult } = require('express-validator');
+const CreateError = require('http-errors');
 const authService = require('../../../services/auth');
 
 module.exports = (app) => {
@@ -8,10 +10,42 @@ module.exports = (app) => {
     res.send({ message: { status: 'live' } });
   })
 
-  route.post('/register', async (req, res, next) => {
+  route.get('/me', async (req, res, next) => {
     try {
-      user = await authService.register(req.body);
+      if (!req.authenticated) throw new CreateError(401, 'You must be authenticated to use this route.');
+      const user = await authService.me(req.user);
       return res.status(201).json({ user });
+    } catch (error) {
+      next(error);
+    }
+  })
+
+  route.post(
+    '/register',
+    body('email').not().isEmpty().withMessage('Email must not be blank.').isEmail().withMessage('Email must be email format.'),
+    body('username').not().isEmpty().withMessage('Username must not be blank.'),
+    body('password').not().isEmpty().withMessage('Password must not be blank.'),
+    async (req, res, next) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) throw new CreateError(400, errors.array()[0].msg);
+      const { user, token } = await authService.register(req.body);
+      return res.status(201).json({ user, token });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  route.post(
+    '/login',
+    body('email').not().isEmpty().withMessage('Email must not be blank.').isEmail().withMessage('Email must be email format.'),
+    body('password').not().isEmpty().withMessage('Password must not be blank.'),
+    async (req, res, next) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) throw new CreateError(400, errors.array()[0].msg);
+      const { user, token } = await authService.login(req.body);
+      return res.status(201).json({ user, token });
     } catch (error) {
       next(error);
     }
