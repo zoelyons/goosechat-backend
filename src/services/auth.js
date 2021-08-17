@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const CreateError = require('http-errors');
 const config = require('../config');
 const User = require('../models/user');
-const user = require('../models/user');
 
 function generateToken(user) {
   const today = new Date();
