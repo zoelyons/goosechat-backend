@@ -10,13 +10,13 @@ module.exports = (app) => {
     try {
       if (!req.authenticated) throw new CreateError(401, 'You must be authenticated to use this route.');
       if (req.user.role != 'admin') throw new CreateError(401, 'You must be an admin to use this route.');
-      let user = null;
       if (!req.params.id) {
-        user = await userService.get();
+        let users = await userService.get();
+        return res.status(201).json({ users });
       } else {
-        user = await userService.getUser(req.params.id);
+        let user = await userService.getUser(req.params.id);
+        return res.status(201).json({ user });
       }
-      return res.status(201).json({ user });
     } catch (error) {
       next(error);
     }

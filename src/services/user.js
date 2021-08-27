@@ -22,7 +22,8 @@ function generateToken(user) {
 
 const get = async() => {
   try {
-    return await User.find();
+    let users = await User.find();
+    return users;
   } catch(error) {
     throw new CreateError(error)
   }

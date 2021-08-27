@@ -24,8 +24,7 @@ const authenticator = async (req, res, next) => {
   }
 };
 
-module.exports = (app) => {
-
+module.exports = (app, server) => {
   app.use(cors());
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());

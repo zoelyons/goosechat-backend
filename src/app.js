@@ -4,10 +4,11 @@ const loaders = require('./loaders');
 
 async function startServer() {
   const app = express();
+  const server = require('http').createServer(app);
 
-  loaders(app);
+  loaders(app, server);
 
-  app
+  server
     .listen(config.port, () => {})
     .on('error', () => {
       process.exit(1);
