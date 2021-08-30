@@ -61,7 +61,7 @@ module.exports = (app) => {
       let serverRecords = await serverService.getServersByUserId(req.user._id);
       let servers = JSON.parse(JSON.stringify(serverRecords));
       let unresolvedServers = servers.map(async(server) => {
-        let channelRecords = await channelService.getChannelsByServerId(server._id);
+        let channelRecords = await channelService.getChannelsByServerId(server._id, req.user._id);
         let channels = JSON.parse(JSON.stringify(channelRecords));
         let unresolvedChannels = channels.map(async(channel) => {
           let messageRecords = await messageService.getMessagesByChannelId(channel._id);

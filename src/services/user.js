@@ -65,7 +65,19 @@ const updateUser = async(id, userInfo) => {
 
 }
 
+const addFriend = async(_id, friendId) => {
+  try {
+    let userRecord = await User.findOne({ '_id': _id });
+    userRecord.friends.push(friendId);
+    userRecord.save();
+    return userRecord;
+  } catch(error) {
+    throw new CreateError(error)
+  }
+}
+
 exports.get = get;
 exports.getUser = getUser;
 exports.deleteUser = deleteUser;
 exports.updateUser = updateUser;
+exports.addFriend = addFriend;

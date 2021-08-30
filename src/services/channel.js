@@ -9,10 +9,9 @@ const Channel = require('../models/channel');
 //     throw new CreateError(error)
 //   }
 // }
-const getChannelsByServerId = async(_id) => {
-  console.log(_id)
+const getChannelsByServerId = async(serverID, userID) => {
   try {
-    let channelRecords = await Channel.find({ 'server': _id }).populate('members', [ '_id', 'username', 'role' ]);
+    let channelRecords = await Channel.find({ 'server': serverID, 'members': userID }).populate('members', [ '_id', 'username', 'role' ]);
     return channelRecords;
   } catch(error) {
     throw new CreateError(error)
@@ -28,14 +27,14 @@ const getChannelsByUserId = async(_id) => {
   }
 }
 
-const create = async(author, params) => {
+const create = async(author, params, members) => {
   try {
     const { name, description, server } = params;
     const channelRecord = await Channel.create({
       server,
       name,
       description,
-      members: [ author ],
+      members: members,
     })
     return channelRecord;
   } catch (error) {

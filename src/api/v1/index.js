@@ -4,6 +4,7 @@ const user = require('./routes/user');
 const server = require('./routes/server');
 const channel = require('./routes/channel');
 const message = require('./routes/message');
+const request = require('./routes/request');
 
 module.exports = (app) => {
   app.use('/v1', routes);
@@ -13,5 +14,6 @@ module.exports = (app) => {
   server(routes);
   channel(routes);
   message(routes);
+  request(routes);
   return routes;
 };

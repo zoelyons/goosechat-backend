@@ -1,9 +1,9 @@
 const CreateError = require('http-errors');
 const Server = require('../models/server');
 
-const get = async() => {
+const get = async(_id) => {
   try {
-    let serverRecords = await Server.find().populate('users', [ '_id', 'username', 'role' ]);
+    let serverRecords = await Server.findOne({ _id });
     return serverRecords;
   } catch(error) {
     throw new CreateError(error)
@@ -18,7 +18,6 @@ const getServersByUserId = async(_id) => {
     throw new CreateError(error)
   }
 }
-
 
 const create = async(owner, params) => {
   try {
