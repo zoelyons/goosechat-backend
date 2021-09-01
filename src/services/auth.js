@@ -64,17 +64,10 @@ const login = async (userInfo) => {
     return { user, token };
 }
 
-const me = async(userInfo) => {
-  const { email } = userInfo;
-  const userRecord = await User.findOne({ email });
+const me = async(_id) => {
+  const userRecord = await User.findOne({ _id }, '_id username email role friends').populate('friends', [ '_id', 'username', 'role' ]);
   if (!userRecord) throw new CreateError(404, 'User with this email not found.');
-  const user = {
-    _id: userRecord._id,
-    email: userRecord.email,
-    username: userRecord.username,
-    role: userRecord.role,
-  }
-  return user;
+  return userRecord;
 }
 
 exports.login = login;

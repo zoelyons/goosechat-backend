@@ -20,7 +20,16 @@ const getChannelsByServerId = async(serverID, userID) => {
 
 const getChannelsByUserId = async(_id) => {
   try {
-    let channelRecords = await Channel.find({ 'members': _id }).populate('members', [ '_id', 'username', 'role' ]).populate('owner', [ '_id', 'username', 'role' ]);
+    let channelRecords = await Channel.find({ 'members': _id }).populate('members', [ '_id', 'username', 'role' ]);
+    return channelRecords;
+  } catch(error) {
+    throw new CreateError(error)
+  }
+}
+
+const getMyDirectMessageChannels = async(_id) => {
+  try {
+    let channelRecords = await Channel.find({ 'members': _id, 'directMessage': true }).populate('members', [ '_id', 'username', 'role' ]);
     return channelRecords;
   } catch(error) {
     throw new CreateError(error)
@@ -42,6 +51,19 @@ const create = async(author, params, members) => {
   }
 }
 
+const createDirectMessageChannel = async(author, params) => {
+  try {
+    const { user } = params;
+    const channelRecord = await Channel.create({
+      directMessage: true,
+      members: [author, user],
+    })
+    return channelRecord;
+  } catch (error) {
+    throw new CreateError(error)
+  }
+}
+
 const join = async(serverID, userID) => {
   try {
     let channelRecords = await Channel.updateMany({ server: serverID }, { "$push": { "members": userID } })
@@ -53,6 +75,8 @@ const join = async(serverID, userID) => {
 
 // exports.get = get;
 exports.create = create;
+exports.createDirectMessageChannel = createDirectMessageChannel;
 exports.getChannelsByServerId = getChannelsByServerId;
 exports.getChannelsByUserId = getChannelsByUserId;
+exports.getMyDirectMessageChannels = getMyDirectMessageChannels;
 exports.join = join;

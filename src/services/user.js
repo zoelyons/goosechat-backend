@@ -29,9 +29,19 @@ const get = async() => {
   }
 }
 
-const getUser = async(id) => {
+const getUser = async(_id) => {
   try {
-    const user = await User.findById(id);
+    const user = await User.findOne({ _id }, '_id username email role friends').populate('friends', [ '_id', 'username', 'role' ]);
+    return user;
+  } catch (error) {
+    if (error.name == 'CastError') throw new CreateError(400, `_id: ${id} is invalid format.`);
+    throw new CreateError(error);   
+  }
+}
+
+const getUserByUsername = async(username) => {
+  try {
+    const user = await User.findOne({ username });
     return user;
   } catch (error) {
     if (error.name == 'CastError') throw new CreateError(400, `_id: ${id} is invalid format.`);
@@ -81,3 +91,4 @@ exports.getUser = getUser;
 exports.deleteUser = deleteUser;
 exports.updateUser = updateUser;
 exports.addFriend = addFriend;
+exports.getUserByUsername = getUserByUsername;

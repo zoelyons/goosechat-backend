@@ -12,6 +12,7 @@ const authenticator = async (socket, next) => {
     next();
     return;
   }
+  
   try {
     const decoded = jwt.verify(token, config.secret);
     if (decoded) {

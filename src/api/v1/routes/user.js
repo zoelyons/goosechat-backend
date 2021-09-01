@@ -33,11 +33,12 @@ module.exports = (app) => {
     }
   })
 
-  route.get('/add/:id', async (req, res, next) => {
+  route.get('/add/:username', async (req, res, next) => {
     try {
       if (!req.authenticated) throw new CreateError(401, 'You must be authenticated to use this route.');
-      const recipient = await userService.getUser(req.params.id);
-      if (!recipient) throw new CreateError(404, `User with ID ${req.params.id} not found.`);
+      if (req.user.username == req.params.username) throw new CreateError(400, 'You can not friend yourself!');
+      const recipient = await userService.getUserByUsername(req.params.username);
+      if (!recipient) throw new CreateError(404, `User with Username ${req.params.username} not found.`);
       if (recipient.friends.includes(req.user._id)) throw new CreateError(404, `Already friends with user.`);
       const request = await requestService.newRequest(req.user._id, recipient._id);
       return res.status(201).json({ request });

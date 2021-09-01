@@ -13,7 +13,7 @@ module.exports = (app) => {
   route.get('/me', async (req, res, next) => {
     try {
       if (!req.authenticated) throw new CreateError(401, 'You must be authenticated to use this route.');
-      const user = await authService.me(req.user);
+      const user = await authService.me(req.user._id);
       return res.status(201).json({ user });
     } catch (error) {
       next(error);

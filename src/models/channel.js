@@ -5,15 +5,20 @@ const schema = mongoose.Schema(
     server: {
       type : mongoose.ObjectId,
       ref: 'Server',
+      required: false,
+    },
+    directMessage: {
+      type : Boolean,
       required: true,
+      default: false,
     },
     name: {
       type: String,
-      required: true,
+      required: false,
     },
     description: {
       type: String,
-      required: true,
+      required: false,
     },
     members: [{
       type : mongoose.ObjectId,
