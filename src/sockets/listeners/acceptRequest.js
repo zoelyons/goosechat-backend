@@ -10,6 +10,7 @@ module.exports = function (io, socket) {
     await userService.addFriend(request.recipient, request.sender);
     let sender = await userService.getUser(request.sender);
     let recipient = await userService.getUser(request.recipient);
+    console.log(recipient);
     for (const [_, socket] of io.of("/").sockets) {
       if (socket.user._id == request.sender._id) events.updateUser(socket, sender);
       if (socket.user._id == request.recipient._id) events.updateUser(socket, recipient);

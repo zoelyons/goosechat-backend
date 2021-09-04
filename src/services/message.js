@@ -10,6 +10,15 @@ const getMessagesByChannelId = async(id) => {
   }
 }
 
+const getMessagesByUserId = async(_id) => {
+  try {
+    const messageRecords = await Message.find({ author: _id }).populate('author', [ '_id', 'username', 'role' ]);
+    return messageRecords;
+  } catch (error) {
+    throw new CreateError(error);   
+  }
+}
+
 const getPrivateMessagesByAuthorId = async(_id, authorId) => {
   console.log('recipient: ', _id)
   console.log('authorId: ', authorId)
@@ -52,6 +61,8 @@ const create = async(author, params) => {
 }
 
 exports.getMessagesByChannelId = getMessagesByChannelId;
+exports.getMessagesByUserId = getMessagesByUserId;
+
 exports.getPrivateMessagesByAuthorId = getPrivateMessagesByAuthorId;
 exports.create = create;
 exports.createPrivateMessage = createPrivateMessage;

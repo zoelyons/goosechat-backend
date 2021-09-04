@@ -36,7 +36,7 @@ const getMyDirectMessageChannels = async(_id) => {
   }
 }
 
-const create = async(author, params, members) => {
+const create = async(params, members) => {
   try {
     const { name, description, server } = params;
     const channelRecord = await Channel.create({

@@ -1,5 +1,4 @@
 const events = require('../events');
-const channelService = require('../../services/channel');
 const messageService = require('../../services/message');
 
 

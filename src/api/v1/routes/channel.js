@@ -12,7 +12,7 @@ module.exports = (app) => {
     try {
       if (!req.authenticated) throw new CreateError(401, 'You must be authenticated to use this route.');
       let server = await serverService.get(req.body.server);
-      let channel = await channelService.create(req.user._id, req.body, server.members);
+      let channel = await channelService.create(req.body, server.members);
       return res.status(201).json({ channel });
     } catch (error) {
       next(error);
@@ -22,20 +22,40 @@ module.exports = (app) => {
   route.get('/', async (req, res, next) => {
     try {
       if (!req.authenticated) throw new CreateError(401, 'You must be authenticated to use this route.');
-      let channelRecords = await channelService.getMyDirectMessageChannels(req.user._id);
-      let channels = JSON.parse(JSON.stringify(channelRecords));
-      let unresolvedChannels = channels.map(async(channel) => {
-        let messageRecords = await messageService.getMessagesByChannelId(channel._id);
-        let messages = JSON.parse(JSON.stringify(messageRecords));
-        channel.messages = messages;
-        return channel;
-      })
-      const resolvedChannels = await Promise.all(unresolvedChannels)
-      return res.status(201).json({ channels: resolvedChannels });
-    } catch (error) {
+      let channelRecords = await channelService.getChannelsByUserId(req.user._id);
+      return res.status(201).json({ channels: channelRecords });
+    } catch {
       next(error);
     }
-  });
+  })
+
+  route.get('/directmessage', async (req, res, next) => {
+    try {
+      if (!req.authenticated) throw new CreateError(401, 'You must be authenticated to use this route.');
+      let channelRecords = await channelService.getMyDirectMessageChannels(req.user._id);
+      return res.status(201).json({ channels: channelRecords });
+    } catch {
+      next(error);
+    }
+  })
+
+  // route.get('/', async (req, res, next) => {
+  //   try {
+  //     if (!req.authenticated) throw new CreateError(401, 'You must be authenticated to use this route.');
+  //     let channelRecords = await channelService.getMyDirectMessageChannels(req.user._id);
+  //     let channels = JSON.parse(JSON.stringify(channelRecords));
+  //     let unresolvedChannels = channels.map(async(channel) => {
+  //       let messageRecords = await messageService.getMessagesByChannelId(channel._id);
+  //       let messages = JSON.parse(JSON.stringify(messageRecords));
+  //       channel.messages = messages;
+  //       return channel;
+  //     })
+  //     const resolvedChannels = await Promise.all(unresolvedChannels)
+  //     return res.status(201).json({ channels: resolvedChannels });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // });
 
   route.post('/private', async (req, res, next) => {
     try {

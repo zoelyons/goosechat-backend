@@ -15,6 +15,15 @@ module.exports = (app) => {
     }
   })
 
+  route.get('/', async (req, res, next) => {
+    try {
+      let messages = await messageService.getMessagesByUserId(req.user._id);
+      return res.status(201).json({ messages });
+    } catch (error) {
+      next(error);
+    }
+  })
+
   // route.get('/pm/:id', async (req, res, next) => {
   //   try {
   //     let messages = await messageService.getPrivateMessagesByAuthorId(req.user._id, req.params.id);
