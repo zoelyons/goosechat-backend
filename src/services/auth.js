@@ -41,6 +41,7 @@ const register = async (userInfo) => {
   } catch (error) {
     if (error.errors.email) throw new CreateError(409, 'Account already exists with this email.');
     if (error.errors.username) throw new CreateError(409, 'This username is already in use.');
+    console.log(error);
     throw new CreateError(500, 'Something went wrong.');
   }
 }

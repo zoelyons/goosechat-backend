@@ -1,7 +1,4 @@
 const serverService = require('../services/server');
-// const channelService = require('../services/channel');
-// const messageService = require('../services/message');
-// const actions = require('./actions');
 const listeners = require('./listeners');
 const channelService = require('../services/channel');
 

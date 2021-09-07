@@ -1,5 +1,5 @@
 const event = (socket, channel) => {
-  // socket.emit('newDirectMessageChannel', channel)
+  socket.emit('add', channel)
 }
 
 module.exports = event

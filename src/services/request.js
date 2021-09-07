@@ -4,11 +4,29 @@ const Request = require('../models/request');
 
 const newRequest = async(sender, recipient) => {
   try {
-    const requestRecord = await Request.create({
+    let requestRecord = await Request.create({
       sender,
       recipient,
     })
+    requestRecord = await requestRecord.populate('sender', [ '_id', 'username', 'role' ]).execPopulate();
     return requestRecord;
+  } catch(error) {
+    throw new CreateError(error)
+  }
+}
+
+const getRequestByUserIds = async(_id, recipientId, onlyActive) => {
+  let params = {
+    'sender': _id,
+    'recipient': recipientId,
+  }
+  if (onlyActive) {
+    params.accepted = false;
+    params.declined = false;
+  }
+  try {
+    let requestRecords = await Request.findOne(params);
+    return requestRecords;
   } catch(error) {
     throw new CreateError(error)
   }
@@ -60,3 +78,4 @@ exports.newRequest = newRequest;
 exports.getRequestsByUserId = getRequestsByUserId;
 exports.getRequestById = getRequestById;
 exports.updateRequest = updateRequest;
+exports.getRequestByUserIds = getRequestByUserIds;

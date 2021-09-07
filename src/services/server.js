@@ -36,18 +36,20 @@ const create = async(owner, params) => {
 const join = async(serverID, userID) => {
   try {
     let serverRecord = await Server.findOne({ '_id': serverID });
+    if (!serverRecord) throw "Server does not exist."
     if (serverRecord.members.includes(userID)) throw new CreateError(401, 'You are already in this server.');
     serverRecord.members.push(userID);
     serverRecord.save();
     return serverRecord;
   } catch(error) {
-    throw new CreateError(error)
+    return error;
   }
 }
 
 const joinByName = async(name, userID) => {
   try {
     let serverRecord = await Server.findOne({ 'name': name });
+    if (!serverRecord) throw new CreateError(404, `No server with name '${name}'.`);
     if (serverRecord.members.includes(userID)) throw new CreateError(401, 'You are already in this server.');
     serverRecord.members.push(userID);
     serverRecord.save();

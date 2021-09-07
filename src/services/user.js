@@ -79,7 +79,7 @@ const addFriend = async(_id, friendId) => {
   try {
     let userRecord = await User.findOne({ '_id': _id });
     userRecord.friends.push(friendId);
-    userRecord.save();
+    await userRecord.save();
     return userRecord;
   } catch(error) {
     throw new CreateError(error)

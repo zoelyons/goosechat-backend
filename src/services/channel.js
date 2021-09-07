@@ -36,6 +36,16 @@ const getMyDirectMessageChannels = async(_id) => {
   }
 }
 
+const findDirectMessageChannelByIds = async(user1Id, user2Id) => {
+  try {
+    let channelRecord = await Channel.findOne({ 'members': [user1Id, user2Id], 'directMessage': true });
+    return channelRecord;
+  } catch (error) {
+    console.log(error)
+    throw new CreateError(error)
+  }
+}
+
 const create = async(params, members) => {
   try {
     const { name, description, server } = params;
@@ -51,15 +61,16 @@ const create = async(params, members) => {
   }
 }
 
-const createDirectMessageChannel = async(author, params) => {
+const createDirectMessageChannel = async(author, _id) => {
   try {
-    const { user } = params;
-    const channelRecord = await Channel.create({
+    let channelRecord = await Channel.create({
       directMessage: true,
-      members: [author, user],
+      members: [author, _id],
     })
+    channelRecord = await channelRecord.populate('members', [ '_id', 'username', 'role' ]).execPopulate();
     return channelRecord;
   } catch (error) {
+    console.log(error);
     throw new CreateError(error)
   }
 }
@@ -80,3 +91,4 @@ exports.getChannelsByServerId = getChannelsByServerId;
 exports.getChannelsByUserId = getChannelsByUserId;
 exports.getMyDirectMessageChannels = getMyDirectMessageChannels;
 exports.join = join;
+exports.findDirectMessageChannelByIds = findDirectMessageChannelByIds;
