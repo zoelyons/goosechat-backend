@@ -47,26 +47,18 @@ const register = async (userInfo) => {
 }
 
 const login = async (userInfo) => {
-    const { email, password } = userInfo;
-    const userRecord = await User.findOne({ email });
-    if (!userRecord) throw new CreateError(404, 'User with this email not found.');
-    const validPassword = await bcrypt.compare(
-      password,
-      userRecord.password,
-    );
-    if (!validPassword) throw new CreateError(401, 'Invalid email or password.');
-    const user = {
-      _id: userRecord._id,
-      email: userRecord.email,
-      username: userRecord.username,
-      role: userRecord.role,
-    }
-    const token = generateToken(user);
-    return { user, token };
+  const { email, password } = userInfo;
+  let userRecord = await User.findOne({ email }, '_id username email role friends avatar password').lean();
+  if (!userRecord) throw new CreateError(404, 'User with this email not found.');
+  const validPassword = await bcrypt.compare(password, userRecord.password);
+  if (!validPassword) throw new CreateError(401, 'Invalid email or password.');
+  delete userRecord.password;
+  const token = generateToken(userRecord);
+  return token;
 }
 
-const me = async(_id) => {
-  const userRecord = await User.findOne({ _id }, '_id username email role friends').populate('friends', [ '_id', 'username', 'role' ]);
+const me = async (_id) => {
+  const userRecord = await User.findOne({ _id }, '_id username email role friends avatar').populate('friends', ['_id', 'username', 'role']);
   if (!userRecord) throw new CreateError(404, 'User with this email not found.');
   return userRecord;
 }

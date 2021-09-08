@@ -1,36 +1,36 @@
 const CreateError = require('http-errors');
 const Message = require('../models/message');
 
-const getMessagesByChannelId = async(id) => {
+const getMessagesByChannelId = async (id) => {
   try {
-    const messageRecords = await Message.find({ channel: id }).populate('author', [ '_id', 'username', 'role' ]);
+    const messageRecords = await Message.find({ channel: id }).populate('author', ['_id', 'username', 'role', 'avatar']);
     return messageRecords;
   } catch (error) {
-    throw new CreateError(error);   
+    throw new CreateError(error);
   }
 }
 
-const getMessagesByUserId = async(_id) => {
+const getMessagesByUserId = async (_id) => {
   try {
-    const messageRecords = await Message.find({ author: _id }).populate('author', [ '_id', 'username', 'role' ]);
+    const messageRecords = await Message.find({ author: _id }).populate('author', ['_id', 'username', 'role', 'avatar']);
     return messageRecords;
   } catch (error) {
-    throw new CreateError(error);   
+    throw new CreateError(error);
   }
 }
 
-const getPrivateMessagesByAuthorId = async(_id, authorId) => {
+const getPrivateMessagesByAuthorId = async (_id, authorId) => {
   console.log('recipient: ', _id)
   console.log('authorId: ', authorId)
   try {
-    const messageRecords = await Message.find({ recipient: authorId,  }).populate('author', [ '_id', 'username', 'role' ]);
+    const messageRecords = await Message.find({ recipient: authorId, }).populate('author', ['_id', 'username', 'role', 'avatar']);
     return messageRecords;
   } catch (error) {
-    throw new CreateError(error);   
+    throw new CreateError(error);
   }
 }
 
-const createPrivateMessage = async(author, params) => {
+const createPrivateMessage = async (author, params) => {
   try {
     const { recipient, message } = params;
     let messageRecord = await Message.create({
@@ -38,14 +38,14 @@ const createPrivateMessage = async(author, params) => {
       author,
       recipient
     });
-    messageRecord = await messageRecord.populate('author', [ '_id', 'username', 'role' ]).execPopulate()
+    messageRecord = await messageRecord.populate('author', ['_id', 'username', 'role', 'avatar']).execPopulate()
     return messageRecord;
   } catch (error) {
     throw new CreateError(error)
   }
 }
 
-const create = async(author, params) => {
+const create = async (author, params) => {
   try {
     const { message, channel } = params;
     let messageRecord = await Message.create({
@@ -53,7 +53,7 @@ const create = async(author, params) => {
       author,
       channel
     });
-    messageRecord = await messageRecord.populate('author', [ '_id', 'username', 'role' ]).execPopulate()
+    messageRecord = await messageRecord.populate('author', ['_id', 'username', 'role', 'avatar']).execPopulate()
     return messageRecord;
   } catch (error) {
     throw new CreateError(error)

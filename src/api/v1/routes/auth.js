@@ -26,30 +26,30 @@ module.exports = (app) => {
     body('username').not().isEmpty().withMessage('Username must not be blank.'),
     body('password').not().isEmpty().withMessage('Password must not be blank.'),
     async (req, res, next) => {
-    try {
-      if (req.authenticated) throw new CreateError(401, 'You must be logged out to use this route.');
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) throw new CreateError(400, errors.array()[0].msg);
-      const { user, token } = await authService.register(req.body);
-      return res.status(201).json({ user, token });
-    } catch (error) {
-      next(error);
-    }
-  });
+      try {
+        if (req.authenticated) throw new CreateError(401, 'You must be logged out to use this route.');
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) throw new CreateError(400, errors.array()[0].msg);
+        const { user, token } = await authService.register(req.body);
+        return res.status(201).json({ user, token });
+      } catch (error) {
+        next(error);
+      }
+    });
 
   route.post(
     '/login',
     body('email').not().isEmpty().withMessage('Email must not be blank.').isEmail().withMessage('Email must be email format.'),
     body('password').not().isEmpty().withMessage('Password must not be blank.'),
     async (req, res, next) => {
-    try {
-      if (req.authenticated) return res.status(201).json({ user: req.user, token: req.headers.authorization });
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) throw new CreateError(400, errors.array()[0].msg);
-      const { user, token } = await authService.login(req.body);
-      return res.status(201).json({ user, token });
-    } catch (error) {
-      next(error);
-    }
-  });
+      try {
+        if (req.authenticated) return res.status(201).json({ user: req.user, token: req.headers.authorization });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) throw new CreateError(400, errors.array()[0].msg);
+        const token = await authService.login(req.body);
+        return res.status(201).json({ token });
+      } catch (error) {
+        next(error);
+      }
+    });
 };

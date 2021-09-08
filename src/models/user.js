@@ -18,6 +18,9 @@ const schema = mongoose.Schema(
       default: 'user',
       required: true,
     },
+    avatar: {
+      type: String,
+    },
     password: {
       type: String,
       required: true,

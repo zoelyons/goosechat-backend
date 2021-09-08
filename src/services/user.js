@@ -20,42 +20,53 @@ function generateToken(user) {
   );
 }
 
-const get = async() => {
+const get = async () => {
   try {
     let users = await User.find();
     return users;
-  } catch(error) {
+  } catch (error) {
     throw new CreateError(error)
   }
 }
 
-const getUser = async(_id) => {
+const getUser = async (_id) => {
   try {
-    const user = await User.findOne({ _id }, '_id username email role friends').populate('friends', [ '_id', 'username', 'role' ]);
+    const user = await User.findOne({ _id }, '_id username email role friends avatar').populate('friends', ['_id', 'username', 'role']);
     return user;
   } catch (error) {
     if (error.name == 'CastError') throw new CreateError(400, `_id: ${id} is invalid format.`);
-    throw new CreateError(error);   
+    throw new CreateError(error);
   }
 }
 
-const getUserByUsername = async(username) => {
+const getUserByUsername = async (username) => {
   try {
     const user = await User.findOne({ username });
     return user;
   } catch (error) {
     if (error.name == 'CastError') throw new CreateError(400, `_id: ${id} is invalid format.`);
-    throw new CreateError(error);   
+    throw new CreateError(error);
   }
 }
 
-const deleteUser = async(id) => {
+const deleteUser = async (id) => {
   const deleted = await User.deleteOne({ _id: id });
   if (!deleted.deletedCount) throw new CreateError(404, 'User with Id not found.');
   return ({ deleted: true, _id: id });
 }
 
-const updateUser = async(id, userInfo) => {
+const updateUserAvatar = async (_id, fileName) => {
+  try {
+    let userRecord = await User.findOne({ _id }, '_id username email role friends avatar').populate('friends', ['_id', 'username', 'role']);
+    userRecord.avatar = fileName;
+    await userRecord.save();
+    return userRecord;
+  } catch (error) {
+    throw new CreateError(error)
+  }
+}
+
+const updateUser = async (id, userInfo) => {
   try {
     const userRecord = await User.findByIdAndUpdate(id, { $set: userInfo }, { new: true });
     if (!userRecord) throw new CreateError(404, 'User with Id not found.');
@@ -75,13 +86,13 @@ const updateUser = async(id, userInfo) => {
 
 }
 
-const addFriend = async(_id, friendId) => {
+const addFriend = async (_id, friendId) => {
   try {
     let userRecord = await User.findOne({ '_id': _id });
     userRecord.friends.push(friendId);
     await userRecord.save();
     return userRecord;
-  } catch(error) {
+  } catch (error) {
     throw new CreateError(error)
   }
 }
@@ -92,3 +103,4 @@ exports.deleteUser = deleteUser;
 exports.updateUser = updateUser;
 exports.addFriend = addFriend;
 exports.getUserByUsername = getUserByUsername;
+exports.updateUserAvatar = updateUserAvatar;

@@ -1,8 +1,20 @@
 const route = require('express').Router();
 const { body, validationResult } = require('express-validator');
+const multer = require('multer');
 const CreateError = require('http-errors');
 const userService = require('../../../services/user');
 const requestService = require('../../../services/request');
+
+const imageUpload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "public/");
+    },
+    filename: function (req, file, cb) {
+      cb(null, new Date().valueOf() + "_" + file.originalname);
+    },
+  }),
+});
 
 module.exports = (app) => {
   app.use('/users', route);
@@ -63,6 +75,16 @@ module.exports = (app) => {
       if (!req.authenticated) throw new CreateError(401, 'You must be authenticated to use this route.');
       if (req.user.role != 'admin') throw new CreateError(401, 'You must be an admin to use this route.');
       const user = await userService.updateUser(req.params.id, req.user._id, req.body);
+      return res.status(201).json({ user });
+    } catch (error) {
+      next(error);
+    }
+  })
+
+  route.post('/avatar', imageUpload.single('avatar'), async (req, res, next) => {
+    try {
+      if (!req.authenticated) throw new CreateError(401, 'You must be authenticated to use this route.');
+      const user = await userService.updateUserAvatar(req.user._id, req.file.filename);
       return res.status(201).json({ user });
     } catch (error) {
       next(error);
