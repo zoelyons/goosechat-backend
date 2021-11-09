@@ -3,12 +3,17 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema(
   {
     server: {
-      type : mongoose.ObjectId,
+      type: mongoose.ObjectId,
       ref: 'Server',
       required: false,
     },
+    author: {
+      type: mongoose.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     directMessage: {
-      type : Boolean,
+      type: Boolean,
       required: true,
       default: false,
     },
@@ -21,7 +26,7 @@ const schema = mongoose.Schema(
       required: false,
     },
     members: [{
-      type : mongoose.ObjectId,
+      type: mongoose.ObjectId,
       ref: 'User',
     }],
   },

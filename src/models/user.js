@@ -13,6 +13,15 @@ const schema = mongoose.Schema(
       required: true,
       unique: true,
     },
+    username: {
+      type: String,
+      required: true,
+    },
+    tag: {
+      type: String,
+      required: true,
+      default: (Math.floor(Math.random() * 10000) + 10000).toString().substring(1)
+    },
     role: {
       type: String,
       default: 'user',
@@ -26,7 +35,7 @@ const schema = mongoose.Schema(
       required: true,
     },
     friends: [{
-      type : mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     }],
   },

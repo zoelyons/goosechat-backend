@@ -4,9 +4,9 @@ const requestService = require('../../services/request');
 
 
 module.exports = function (io, socket) {
-  socket.on('addFriend', async(username, callback) => {
+  socket.on('addFriend', async (username, callback) => {
     try {
-      if (socket.user.username == username) throw { message: "Can't friend yourself."};
+      if (socket.user.username == username) throw { message: "Can't friend yourself." };
       const recipient = await userService.getUserByUsername(username);
       if (!recipient) throw { message: `Username ${username} not found.` };
       if (recipient.friends.includes(socket.user._id)) throw { message: `Already friends with this user.` };

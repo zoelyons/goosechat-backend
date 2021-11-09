@@ -20,6 +20,7 @@ const authenticator = async (req, res, next) => {
       next();
     }
   } catch (error) {
+    if (error.message === 'invalid signature') return next(CreateError(401, error.message));
     next(CreateError(error.status, error.message));
   }
 };
@@ -35,10 +36,8 @@ module.exports = (app, server) => {
   app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.json({
-      error: {
-        status: err.status,
-        message: err.message,
-      },
+      status: err.status,
+      message: err.message
     });
   });
 };

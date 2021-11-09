@@ -17,7 +17,7 @@ const imageUpload = multer({
 });
 
 module.exports = (app) => {
-  app.use('/users', route);
+  app.use('/user', route);
 
   route.get('/:id?', async (req, res, next) => {
     try {

@@ -13,6 +13,7 @@ function generateToken(user) {
     {
       _id: user._id,
       username: user.username,
+      tag: user.tag,
       email: user.email,
       role: user.role,
       exp: exp.getTime() / 1000,
@@ -36,7 +37,7 @@ const register = async (userInfo) => {
       username: userRecord.username,
       role: userRecord.role,
     }
-    const token = generateToken(user);
+    const token = generateToken(userRecord);
     return { user, token };
   } catch (error) {
     if (error.errors.email) throw new CreateError(409, 'Account already exists with this email.');
@@ -48,17 +49,16 @@ const register = async (userInfo) => {
 
 const login = async (userInfo) => {
   const { email, password } = userInfo;
-  let userRecord = await User.findOne({ email }, '_id username email role friends avatar password').lean();
+  let userRecord = await User.findOne({ email }, '_id username tag email role friends avatar password').lean();
   if (!userRecord) throw new CreateError(404, 'User with this email not found.');
   const validPassword = await bcrypt.compare(password, userRecord.password);
   if (!validPassword) throw new CreateError(401, 'Invalid email or password.');
-  delete userRecord.password;
   const token = generateToken(userRecord);
   return token;
 }
 
 const me = async (_id) => {
-  const userRecord = await User.findOne({ _id }, '_id username email role friends avatar').populate('friends', ['_id', 'username', 'role']);
+  const userRecord = await User.findOne({ _id }, '_id username tag email role friends avatar').populate('friends', ['_id', 'username', 'tag', 'role', 'avatar']);
   if (!userRecord) throw new CreateError(404, 'User with this email not found.');
   return userRecord;
 }

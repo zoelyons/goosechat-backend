@@ -1,4 +1,4 @@
-const { Server } =  require('socket.io');
+const { Server } = require('socket.io');
 const sockets = require('../sockets');
 const jwt = require('jsonwebtoken');
 const CreateError = require('http-errors');
@@ -12,7 +12,7 @@ const authenticator = async (socket, next) => {
     next();
     return;
   }
-  
+
   try {
     const decoded = jwt.verify(token, config.secret);
     if (decoded) {
@@ -25,12 +25,12 @@ const authenticator = async (socket, next) => {
   }
 };
 
-module.exports = (server) => { 
-  const io = new Server(server, { 
+module.exports = (server) => {
+  const io = new Server(server, {
     allowEIO3: true,
     cors: {
-    origin: true,
-    credentials: true
+      origin: true,
+      credentials: true
     }
   });
 

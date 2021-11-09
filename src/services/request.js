@@ -64,7 +64,7 @@ const updateRequest = async (_id, userId, params) => {
     let { accepted, declined } = params;
     if (accepted) requestRecord.accepted = true;
     if (declined) requestRecord.declined = true;
-    requestRecord.save();
+    await requestRecord.save();
     return requestRecord;
   } catch (error) {
     throw new CreateError(error)

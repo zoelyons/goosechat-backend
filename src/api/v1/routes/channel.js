@@ -24,7 +24,7 @@ module.exports = (app) => {
       if (!req.authenticated) throw new CreateError(401, 'You must be authenticated to use this route.');
       let channelRecords = await channelService.getChannelsByUserId(req.user._id);
       return res.status(201).json({ channels: channelRecords });
-    } catch {
+    } catch (error) {
       next(error);
     }
   })

@@ -58,7 +58,7 @@ const deleteUser = async (id) => {
 const updateUserAvatar = async (_id, fileName) => {
   try {
     let userRecord = await User.findOne({ _id }, '_id username email role friends avatar').populate('friends', ['_id', 'username', 'role']);
-    userRecord.avatar = fileName;
+    userRecord.avatar = 'http://192.168.1.74:8888/' + fileName;
     await userRecord.save();
     return userRecord;
   } catch (error) {
